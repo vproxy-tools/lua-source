@@ -44,7 +44,7 @@ CWARNS= $(CWARNSCPP)  $(CWARNSC)
 # -DLUA_USE_CTYPE -DLUA_USE_APICHECK
 # (in clang, '-ftrapv' for runtime checks of integer overflows)
 # -fsanitize=undefined -ftrapv
-TESTS= -DLUA_USER_H='"ltests.h"'
+# TESTS= -DLUA_USER_H='"ltests.h"'
 
 # -mtune=native -fomit-frame-pointer
 # -fno-stack-protector
@@ -54,12 +54,12 @@ LOCAL = $(TESTS) $(CWARNS) -g
 
 # enable Linux goodies
 MYCFLAGS= $(LOCAL) -std=c99 -DLUA_USE_LINUX -DLUA_COMPAT_5_2
-MYLDFLAGS= $(LOCAL) -Wl,-E
+MYLDFLAGS= $(LOCAL)
 MYLIBS= -ldl -lreadline
 
 
 CC= gcc
-CFLAGS= -Wall -O2 $(MYCFLAGS)
+CFLAGS= -Wall -O2 $(MYCFLAGS) -fPIC
 AR= ar rc
 RANLIB= ranlib
 RM= rm -f
@@ -95,6 +95,12 @@ o:	$(ALL_O)
 
 a:	$(ALL_A)
 
+liblua.so: $(CORE_O) $(AUX_O) $(LIB_O)
+	$(CC) -o liblua.so -shared $(CORE_O) $(AUX_O) $(LIB_O) $(MYLDFLAGS) $(LIBS) $(MYLIBS)
+liblua.dylib: liblua.so
+	cp liblua.so liblua.dylib
+lua.dll: liblua.so
+	cp liblua.so lua.dll
 $(CORE_T): $(CORE_O) $(AUX_O) $(LIB_O)
 	$(AR) $@ $?
 	$(RANLIB) $@
