@@ -18,7 +18,7 @@ LOCAL = $(TESTS) $(CWARNS)
 
 
 CC= gcc
-CFLAGS= -Wall $(MYCFLAGS) -O2
+CFLAGS= -Wall $(MYCFLAGS) -O2 -fPIC
 AR= ar rcu
 RANLIB= ranlib
 RM= rm -f
@@ -26,13 +26,6 @@ RM= rm -f
 MYCFLAGS= $(LOCAL)
 MYLDFLAGS=
 MYLIBS=
-
-
-# enable Linux goodies
-MYCFLAGS= $(LOCAL) -DLUA_USE_LINUX
-MYLDFLAGS= -Wl,-E
-MYLIBS= -ldl -lreadline -lhistory -lncurses
-
 
 
 # == END OF USER SETTINGS. NO NEED TO CHANGE ANYTHING BELOW THIS LINE =========
@@ -51,8 +44,8 @@ LIB_O=	lbaselib.o ldblib.o liolib.o lmathlib.o loslib.o ltablib.o lstrlib.o \
 LUA_T=	lua
 LUA_O=	lua.o
 
-LUAC_T=	luac
-LUAC_O=	luac.o print.o
+LUAC_T=
+LUAC_O=
 
 ALL_T= $(CORE_T) $(LUA_T) $(LUAC_T)
 ALL_O= $(CORE_O) $(LUA_O) $(LUAC_O) $(AUX_O) $(LIB_O)
@@ -63,6 +56,13 @@ all:	$(ALL_T)
 o:	$(ALL_O)
 
 a:	$(ALL_A)
+
+liblua.so: $(CORE_O) $(AUX_O) $(LIB_O)
+	$(CC) -o liblua.so -shared $(CORE_O) $(AUX_O) $(LIB_O) $(MYLDFLAGS) $(LIBS) $(MYLIBS) $(DL)
+liblua.dylib: liblua.so
+	cp liblua.so liblua.dylib
+lua.dll: liblua.so
+	cp liblua.so lua.dll
 
 $(CORE_T): $(CORE_O) $(AUX_O) $(LIB_O)
 	$(AR) $@ $?
