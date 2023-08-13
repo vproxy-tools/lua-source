@@ -1,0 +1,8 @@
+#ifndef _REDUKTI_RAVI_CONFIG_H_IN_H
+#define _REDUKTI_RAVI_CONFIG_H_IN_H
+
+#cmakedefine NO_LUA_DEBUG @NO_LUA_DEBUG@
+#cmakedefine USE_MIRJIT @USE_MIRJIT@
+#cmakedefine USE_RAVICOMP @USE_RAVICOMP@
+
+#endif  //_REDUKTI_RAVI_CONFIG_H_IN_H

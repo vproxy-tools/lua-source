@@ -1,0 +1,20 @@
+language: cpp
+os:
+ - linux
+arch:
+ - amd64
+ - arm64
+compiler:
+ - gcc
+cache: ccache
+dist: focal
+addons:
+  apt:
+    packages:
+      - gcc
+      - ccache
+script:
+ - mkdir $TRAVIS_BUILD_DIR/buildmir
+ - cd $TRAVIS_BUILD_DIR/buildmir && cmake -DCMAKE_BUILD_TYPE=Debug -DLTESTS=ON -DMIR_JIT=ON -G "Unix Makefiles" ..
+ - cd $TRAVIS_BUILD_DIR/buildmir && make
+ - cd $TRAVIS_BUILD_DIR/tests && sh ./run_tests.sh $TRAVIS_BUILD_DIR/buildmir/ravi
